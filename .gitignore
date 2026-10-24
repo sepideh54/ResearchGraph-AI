@@ -1,5 +1,19 @@
-.venv/
+# Python
 __pycache__/
 *.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Secrets
 .env
-data/*.pdf
+.env.*
+!.env.example
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+
+# Generated data
+data/embeddings.npy

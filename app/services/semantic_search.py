@@ -37,3 +37,12 @@ def save_embeddings(embeddings, path="data/embeddings.npy"):
 
 def load_embeddings(path="data/embeddings.npy"):
     return np.load(path)
+
+def retrieve_relevant_chunks(query, chunks, chunk_embeddings, top_k=3):
+    results = search_chunks(
+        query,
+        chunks,
+        chunk_embeddings,
+        top_k=top_k
+    )
+    return results

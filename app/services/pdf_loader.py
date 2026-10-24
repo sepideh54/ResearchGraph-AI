@@ -1,12 +1,32 @@
 import pymupdf
+from schemas import PageData
 
-def extract(file):
+# def extract(file):
+#     doc = pymupdf.open(file)
+#     text = ""
+#     for page in doc:
+#         text += page.get_text()
+#     doc.close()
+#     return text
+
+def extract_pages(file):
     doc = pymupdf.open(file)
-    text = ""
-    for page in doc:
-        text += page.get_text()
+    pages = []
+
+    for page_number, page in enumerate(doc, start=1):
+        text = page.get_text()
+        page_data = PageData(
+          page_number=page_number,
+          text=page.get_text()
+)
+
+        pages.append(page_data)
+
     doc.close()
-    return text
+    return pages
+
+
+
     
 # def chunk_text(text, chunk_size=3):
 #     words = text.split()
@@ -33,13 +53,16 @@ def chunk_text(text, chunk_size=100, overlap=20):
         chunks.append(" ".join(chunk))
 
     return chunks
-text = extract("data/Building Effective AI Agents.pdf")
-chunks = chunk_text(text)
 
-print("Total words:", len(text.split()))
-print("Total chunks:", len(chunks))
-print("\nFirst chunk:\n", chunks[0])
-print("\nSecond chunk:\n", chunks[1])
-print("First chunk type:", type(chunks[0]))
-print("First chunk words:", len(chunks[0].split()))
-print("Last chunk words:", len(chunks[-1].split()))
+if __name__ == "__main__":
+    text = extract("data/Building Effective AI Agents.pdf")
+    chunks = chunk_text(text)
+    print("Total words:", len(text.split()))
+    print("Total chunks:", len(chunks))
+    print("\nFirst chunk:\n", chunks[0])
+    print("\nSecond chunk:\n", chunks[1])
+    print("First chunk type:", type(chunks[0]))
+    print("First chunk words:", len(chunks[0].split()))
+    print("Last chunk words:", len(chunks[-1].split()))
+
+
