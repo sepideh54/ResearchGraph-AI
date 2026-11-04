@@ -2,9 +2,6 @@ from sentence_transformers import SentenceTransformer
 import numpy as np
 
 model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-def create_embeddings(chunks):
-    embeddings = model.encode(chunks)
-    return embeddings
 
 def create_embeddings(chunks):
     embeddings = model.encode(chunks, normalize_embeddings=True)

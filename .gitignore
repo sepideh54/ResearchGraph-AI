@@ -17,3 +17,8 @@ venv/
 
 # Generated data
 data/embeddings.npy
+
+# Local databases and generated data
+data/chroma_db/
+data/*.pdf
+*.sqlite3
