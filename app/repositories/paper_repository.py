@@ -6,8 +6,7 @@ def create_paper(db: Session, paper_data: dict):
     paper = Paper(**paper_data)
 
     db.add(paper)
-    db.commit()
-    db.refresh(paper)
+    db.flush()
 
     return paper
 
@@ -34,13 +33,18 @@ def update_paper(db: Session, paper_id: int, update_data: dict):
     if paper is None:
         return None
 
-    for key, value in update_data.items():
-        setattr(paper, key, value)
+    allowed_fields = {"title"}
 
-    db.commit()
-    db.refresh(paper)
+    for key, value in update_data.items():
+        if key not in allowed_fields:
+            raise ValueError(f"Field '{key}' cannot be updated")
+
+        setattr(paper, key, value)
+    db.flush()
 
     return paper
+
+
 
 def delete_paper(db: Session, paper_id: int):
     paper = get_paper(db, paper_id)
@@ -49,6 +53,6 @@ def delete_paper(db: Session, paper_id: int):
         return None
 
     db.delete(paper)
-    db.commit()
+    db.flush()
 
     return paper

@@ -4,12 +4,15 @@ import pymupdf
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from app.db.session import get_db
+from app.api.routers.papers import router as papers_router
 
 app = FastAPI(
     title="ResearchGraph AI",
     description="A multi-stage RAG system for research literature",
-    version="0.1.0",
+    version="0.1.0"
 )
+
+app.include_router(papers_router)
 
 @app.get("/db-health")
 def check_database(db: Session = Depends(get_db)):

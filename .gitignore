@@ -22,3 +22,6 @@ data/embeddings.npy
 data/chroma_db/
 data/*.pdf
 *.sqlite3
+
+# Local package artifacts
+*.whl

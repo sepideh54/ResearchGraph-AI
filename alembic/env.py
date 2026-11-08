@@ -1,14 +1,14 @@
-from logging.config import fileConfig
-
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
 import os
 from dotenv import load_dotenv
+from sqlalchemy.engine import make_url
 
 from app.db.base import Base
 from app.models.paper import Paper
+from logging.config import fileConfig
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -19,6 +19,11 @@ database_url = os.getenv("DATABASE_URL")
 
 if not database_url:
     raise RuntimeError("DATABASE_URL is not set")
+
+if os.getenv("ALEMBIC_TARGET") == "test":
+    database_url = make_url(database_url).set(
+        database="researchgraph_test"
+    ).render_as_string(hide_password=False)
 
 config.set_main_option("sqlalchemy.url", database_url.replace("%", "%%"))
 
