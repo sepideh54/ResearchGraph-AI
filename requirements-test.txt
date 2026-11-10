@@ -1,0 +1,9 @@
+# Minimal dependencies required to run the current automated test suite.
+# Install the full application dependencies separately from requirements.txt.
+pytest>=8.3,<10
+python-dotenv==1.2.4
+SQLAlchemy==2.0.55
+alembic==1.20.1
+psycopg[binary]==3.3.6
+pydantic>=2.0,<3
+pymupdf==1.28.2
