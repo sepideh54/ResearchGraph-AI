@@ -1,10 +1,10 @@
-from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class PaperCreate(BaseModel):
     title: str = Field(min_length=1, max_length=255)
-    filename: str = Field(min_length=1, max_length=255)
 
 
 class PaperUpdate(BaseModel):
@@ -16,5 +16,4 @@ class PaperResponse(BaseModel):
 
     id: int
     title: str
-    filename: str
     created_at: datetime

@@ -9,6 +9,7 @@ from sqlalchemy.engine import make_url
 from app.db.base import Base
 from app.models.paper import Paper
 from logging.config import fileConfig
+from app.models.document import Document
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

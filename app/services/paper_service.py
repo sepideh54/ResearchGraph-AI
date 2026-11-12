@@ -1,7 +1,5 @@
 from sqlalchemy.orm import Session
-
 from app.repositories import paper_repository
-
 
 def create_paper(db: Session, paper_data: dict):
     try:
@@ -12,7 +10,6 @@ def create_paper(db: Session, paper_data: dict):
     except Exception:
         db.rollback()
         raise
-
 
 def get_paper(db: Session, paper_id: int):
     return paper_repository.get_paper(db, paper_id)

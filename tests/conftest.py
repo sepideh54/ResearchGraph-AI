@@ -1,5 +1,6 @@
 import os
-
+from app.models.paper import Paper
+from app.models.document import Document
 import pytest
 from dotenv import load_dotenv
 from sqlalchemy import create_engine

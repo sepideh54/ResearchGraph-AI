@@ -5,6 +5,11 @@ from app.db.session import get_db
 from app.schemas.paper import PaperCreate, PaperUpdate, PaperResponse
 from app.services import paper_service
 
+from fastapi import UploadFile, File
+import pymupdf
+
+from app.services import document_service
+
 router = APIRouter(prefix="/papers", tags=["Papers"])
 
 
@@ -57,3 +62,59 @@ def delete_paper(paper_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Paper not found")
 
     return {"message": "Paper deleted successfully"}
+
+
+@router.post("/{paper_id}/documents", status_code=201)
+async def upload_paper_document(
+    paper_id: int,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
+    if not file.filename or not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(
+            status_code=400,
+            detail="Only PDF files are accepted.",
+        )
+
+    content = await file.read()
+
+    if not content:
+        raise HTTPException(
+            status_code=400,
+            detail="The uploaded file is empty.",
+        )
+
+    try:
+        with pymupdf.open(stream=content, filetype="pdf") as pdf:
+            page_count = len(pdf)
+    except Exception:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid PDF file.",
+        )
+
+    try:
+        document = document_service.upload_document(
+            db=db,
+            paper_id=paper_id,
+            filename=file.filename,
+            content=content,
+        )
+    except Exception as exc:
+        print(repr(exc))
+        raise
+
+
+    if document is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Paper not found.",
+        )
+
+    return {
+        "id": document.id,
+        "paper_id": document.paper_id,
+        "filename": document.filename,
+        "pages": page_count,
+        "status": "uploaded",
+    }
