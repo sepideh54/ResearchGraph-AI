@@ -5,11 +5,11 @@ from alembic import context
 import os
 from dotenv import load_dotenv
 from sqlalchemy.engine import make_url
-
 from app.db.base import Base
 from app.models.paper import Paper
 from logging.config import fileConfig
 from app.models.document import Document
+from app.modules.knowledge_retrieval.adapters.outbound.persistence.document_chunk import DocumentChunk
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

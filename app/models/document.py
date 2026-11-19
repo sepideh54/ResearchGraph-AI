@@ -1,7 +1,11 @@
+
 from datetime import datetime
-from sqlalchemy import DateTime, ForeignKey, String, func
+
+from sqlalchemy import DateTime, ForeignKey, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.db.base import Base
+
 
 class Document(Base):
     __tablename__ = "documents"
@@ -16,6 +20,18 @@ class Document(Base):
 
     filename: Mapped[str] = mapped_column(String(255), nullable=False)
     file_path: Mapped[str] = mapped_column(String(500), nullable=False)
+
+    status: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="pending",
+        server_default="pending",
+    )
+
+    processing_error: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

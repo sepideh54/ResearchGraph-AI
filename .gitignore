@@ -25,3 +25,12 @@ data/*.pdf
 
 # Local package artifacts
 *.whl
+
+# Personal temporary files
+Untitled 1.odt
+Untitled 2.odt
+Untitled.java
+.~lock.*#
+
+# Local data and uploaded documents
+data/

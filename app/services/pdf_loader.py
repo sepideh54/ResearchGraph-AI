@@ -1,6 +1,9 @@
+
 import pymupdf
-from app.services.schemas import PageData
+
 from pathlib import Path
+from app.services.schemas import PageData
+
 
 def extract_pages(source: bytes | str | Path) -> list[PageData]:
     if isinstance(source, bytes):
@@ -17,15 +20,25 @@ def extract_pages(source: bytes | str | Path) -> list[PageData]:
                 text=page.get_text(),
             )
             pages.append(page_data)
+
     return pages
 
 
-def chunk_pages(pages: list[PageData], chunk_size: int = 100, overlap: int = 20) -> list[dict]:
+def chunk_pages(
+    pages: list[PageData],
+    chunk_size: int = 100,
+    overlap: int = 20,
+) -> list[dict]:
+
+    if chunk_size <= 0:
+        raise ValueError("chunk_size must be positive")
+
     if overlap < 0 or overlap >= chunk_size:
         raise ValueError("overlap must be smaller than chunk_size")
 
     chunks = []
     step = chunk_size - overlap
+    chunk_index = 0
 
     for page in pages:
         words = page.text.split()
@@ -37,11 +50,15 @@ def chunk_pages(pages: list[PageData], chunk_size: int = 100, overlap: int = 20)
                 continue
 
             chunks.append({
+                "chunk_index": chunk_index,
                 "text": " ".join(chunk_words),
                 "page_number": page.page_number,
             })
 
+            chunk_index += 1
+
     return chunks
+
 
 if __name__ == "__main__":
     pages = extract_pages("data/Building Effective AI Agents.pdf")
@@ -50,5 +67,3 @@ if __name__ == "__main__":
     print("Total pages:", len(pages))
     print("Total chunks:", len(chunks))
     print("First chunk:", chunks[0])
-
-
