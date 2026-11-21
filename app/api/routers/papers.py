@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_store_document_chunks
 from app.db.session import get_db
-from app.models.document import Document
+from app.models.document import Document, DocumentStatus
 from app.schemas.paper import PaperCreate, PaperUpdate, PaperResponse
 from app.services import paper_service, document_service
 from app.services.pdf_loader import extract_pages
@@ -128,7 +128,7 @@ async def upload_paper_document(
         )
 
     try:
-        document.status = "processing"
+        document.status = DocumentStatus.PROCESSING
         document.processing_error = None
         db.commit()
 
@@ -139,7 +139,7 @@ async def upload_paper_document(
             pages=pages,
         )
 
-        document.status = "completed"
+        document.status = DocumentStatus.COMPLETED
         document.processing_error = None
         db.commit()
 
@@ -147,7 +147,7 @@ async def upload_paper_document(
         db.rollback()
 
         document = db.get(Document, document.id)
-        document.status = "failed"
+        document.status = DocumentStatus.FAILED
         document.processing_error = str(exc)
 
         try:
@@ -185,14 +185,14 @@ def retry_document(
             detail="Document not found",
         )
 
-    if document.status != "failed":
+    if document.status != DocumentStatus.FAILED:
         raise HTTPException(
             status_code=409,
             detail="Only failed documents can be retried",
         )
 
     try:
-        document.status = "processing"
+        document.status = DocumentStatus.PROCESSING
         document.processing_error = None
         db.commit()
 
@@ -208,7 +208,7 @@ def retry_document(
             pages=pages,
         )
 
-        document.status = "completed"
+        document.status = DocumentStatus.COMPLETED
         document.processing_error = None
         db.commit()
 
@@ -224,7 +224,7 @@ def retry_document(
         document = db.get(Document, document_id)
 
         if document is not None:
-            document.status = "failed"
+            document.status = DocumentStatus.FAILED
             document.processing_error = str(exc)
 
             try:
@@ -237,5 +237,3 @@ def retry_document(
             status_code=500,
             detail="Document retry failed",
         )
-
-    
