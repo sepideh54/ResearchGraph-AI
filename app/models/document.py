@@ -1,10 +1,17 @@
-
 from datetime import datetime
+from enum import Enum
 
-from sqlalchemy import DateTime, ForeignKey, String, Text, func
+from sqlalchemy import DateTime, Enum as SQLAlchemyEnum, ForeignKey, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
+
+
+class DocumentStatus(str, Enum):
+    PENDING = "pending"
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    FAILED = "failed"
 
 
 class Document(Base):
@@ -21,11 +28,17 @@ class Document(Base):
     filename: Mapped[str] = mapped_column(String(255), nullable=False)
     file_path: Mapped[str] = mapped_column(String(500), nullable=False)
 
-    status: Mapped[str] = mapped_column(
-        String(20),
+    status: Mapped[DocumentStatus] = mapped_column(
+        SQLAlchemyEnum(
+            DocumentStatus,
+            native_enum=False,
+            length=20,
+            create_constraint=False,
+            values_callable=lambda enum_cls: [status.value for status in enum_cls],
+        ),
         nullable=False,
-        default="pending",
-        server_default="pending",
+        default=DocumentStatus.PENDING,
+        server_default=DocumentStatus.PENDING.value,
     )
 
     processing_error: Mapped[str | None] = mapped_column(
